@@ -59,8 +59,27 @@ char* infixToPostfix(char* infix, struct Stack* ptr)
     {
         if(!isOperator(infix[i]))
         {
-            postfix[j] = infix[i];
-            j++; i++;
+            if(infix[i]=='(')
+            {
+                push(ptr, infix[i]);
+                i++;
+            }
+            else if(infix[i] == ')')
+            {
+                while(ptr->top != -1 && ptr->array[ptr->top]!='(')
+                {
+                    postfix[j] = pop(ptr);
+                    j++;
+                }
+                if(ptr->top != -1)
+                    pop(ptr); // To pop '('
+                i++;
+            }
+            else
+            {
+                postfix[j] = infix[i];
+                j++; i++;
+            }  
         }
         else
         {
@@ -104,6 +123,6 @@ int main()
     // Output  
     printf("\n");
     printf("Infix expression: %s\n", expression);
-    printf("Postfix expression: %s", infixToPostfix(expression, &s));
+    printf("Postfix expression: %s\n", infixToPostfix(expression, &s));
     return 0;
 }
