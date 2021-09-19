@@ -6,6 +6,7 @@ struct CircularQueue
     int* array;
 };
 
+// Function to check if queue is full or not
 int isFull(struct CircularQueue* ptr)
 {
     if(((ptr->j+1) % ptr->size) == ptr->i)
@@ -13,6 +14,7 @@ int isFull(struct CircularQueue* ptr)
     return 0;
 }
 
+// Function to check if queue is empty or not
 int isEmpty(struct CircularQueue* ptr)
 {
     if(ptr->j == -1 && ptr->i==-1)
@@ -20,6 +22,8 @@ int isEmpty(struct CircularQueue* ptr)
     return 0;
 
 }
+
+// Enqueue operation
 void enqueue(struct CircularQueue* ptr, int val)
 {   
     if(isFull(ptr))
@@ -39,6 +43,7 @@ void enqueue(struct CircularQueue* ptr, int val)
     }
 }
 
+// Dequeue operation
 int dequeue(struct CircularQueue* ptr)
 {
     if(isEmpty(ptr))
@@ -66,6 +71,7 @@ int dequeue(struct CircularQueue* ptr)
     }
 }
 
+// To show queue data
 void show(struct CircularQueue* ptr)
 {   
     int a = 1;
@@ -81,6 +87,7 @@ void show(struct CircularQueue* ptr)
 
 int main()
 {
+    // queue intialisation
     struct CircularQueue q;
     q.size = 5;
     q.i = q.j = -1;
@@ -88,7 +95,8 @@ int main()
     for(int i = 0; i < q.size; i++)
         q.array[i] = 0;
     
-    start:
+    // Taking user input
+    start: //goto 
     printf("Enter the operation:\n");
     printf("1: To add a printer.\n");
     printf("2: To remove a printer.\n");
