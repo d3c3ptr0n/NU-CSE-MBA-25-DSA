@@ -2,7 +2,7 @@
 #include<stdlib.h>
 struct CircularQueue
 {
-    int size, i, j;
+    int size, i, j, n;
     int* array;
 };
 
@@ -20,7 +20,6 @@ int isEmpty(struct CircularQueue* ptr)
     if(ptr->j == -1 && ptr->i==-1)
         return 1;
     return 0;
-
 }
 
 // Enqueue operation
@@ -34,50 +33,51 @@ void enqueue(struct CircularQueue* ptr, int val)
         ptr->j = 0;
         ptr->array[ptr->j] = val;
         printf("Enqueued: %d\n", val);
+        ptr->n++;
     }
     else
     {
         ptr->j = (ptr->j+1)%ptr->size;
         ptr->array[ptr->j] = val;
         printf("Enqueued: %d\n", val);
+        ptr->n++;
     }
 }
 
 // Dequeue operation
 int dequeue(struct CircularQueue* ptr)
 {
-    if(isEmpty(ptr))
-    {
-        printf("Queue is Empty!!\n");
-        return 0;
-    }
-    else if(ptr->i == ptr->j)
-    {
-        int x = ptr->array[ptr->i];
-        printf("Dequeued: %d\n", x);
-        ptr->array[ptr->i] = 0;
-        ptr->i = -1;
-        ptr->j = -1;
-        return x;
-    }
-    else
-    {
-        int x = ptr->array[ptr->i];
-        printf("Dequeued: %d\n", x);
-        ptr->array[ptr->i] = 0;
-
-        ptr->i = (ptr->i+1)%ptr->size;
-        return x;
-    }
+    for(int i = 0; i < ptr->size; i++)
+        ptr->array[i] = 0;
+    ptr->i = ptr->j = -1;
+    printf("Removed all the activities.\n");
 }
 
 // To show queue data
 void show(struct CircularQueue* ptr)
 {   
     int a = 1;
-    for(int i = 0; i < ptr->size; i++)
+    int front = ptr->i, rear = ptr->j;
+
+    if(front == -1)
+        printf("The queue is empty.\n");
+    else if(front <= rear)
     {
-        if(ptr->array[i]!=0)
+        for(int i = front; i <= rear; i++)
+        {
+            printf("At %d: %d\n", a, ptr->array[i]);
+            a++;
+        }
+    }
+    else
+    {
+        for(int i = front; i < ptr->size; i++)
+        {
+            printf("At %d: %d\n", a, ptr->array[i]);
+            a++;
+        }
+        front = 0;
+        for(int i = front; i <= rear; i++)
         {
             printf("At %d: %d\n", a, ptr->array[i]);
             a++;
@@ -91,6 +91,7 @@ int main()
     struct CircularQueue q;
     q.size = 5;
     q.i = q.j = -1;
+    q.n = 0;
     q.array = (int*)malloc(sizeof(int)*q.size);
     for(int i = 0; i < q.size; i++)
         q.array[i] = 0;
@@ -98,10 +99,10 @@ int main()
     // Taking user input
     start: //goto 
     printf("Enter the operation:\n");
-    printf("1: To add a printer.\n");
-    printf("2: To remove a printer.\n");
-    printf("3: To show all printers.\n");
-    printf("4. To exit.\n");
+    printf("1: To add a printer activity.\n");
+    printf("2: To remove activities.\n");
+    printf("3: To show all running activities.\n");
+    printf("4: To exit.\n");
 
     int x; scanf("%d", &x);
     switch(x)
