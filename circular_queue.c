@@ -122,7 +122,7 @@ int main()
     printf("1: To add an element.\n");
     printf("2: To remove an element.\n");
     printf("3: To show all the elements.\n");
-    printf("4. To exit.\n");
+    printf("4: To exit.\n");
 
     int x; scanf("%d", &x);
     switch(x)
