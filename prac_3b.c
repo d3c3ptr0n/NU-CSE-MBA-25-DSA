@@ -45,9 +45,7 @@ int findHighestPriority(struct PriorityQueue arr[])
 void dequeue(struct PriorityQueue arr[])
 {
     if (rear == 0)
-    {
         printf("Queue is empty!\n");
-    }
     else
     {
         int index, priority = findHighestPriority(arr);
