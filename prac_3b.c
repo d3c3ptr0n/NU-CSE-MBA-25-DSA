@@ -88,7 +88,7 @@ int main()
     printf("1: To enqueue.\n");
     printf("2: To dequeue.\n");
     printf("3: To show queue data.\n");
-    printf("4. To exit.\n");
+    printf("4: To exit.\n");
 
     int x;
     scanf("%d", &x);
