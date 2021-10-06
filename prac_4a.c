@@ -38,7 +38,10 @@ struct Node* insert(struct Node* head, int data, int index)
     else
     {
         if(index > N)
+        {
             printf("Invalid index!\n");
+            return head;
+        }
         else
         {
             struct Node* p = head;
@@ -89,7 +92,10 @@ struct Node* delete(struct Node* head, int index)
     else
     {
         if(index >= N)
+        {
             printf("Invalid Index!\n");
+            return head;
+        }
         else
         {
             int i = 0;
