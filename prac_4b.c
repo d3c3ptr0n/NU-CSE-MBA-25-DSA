@@ -1,260 +1,147 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 
 struct Node
 {
-    int coefficient, exponent;
-    struct Node *next;
+    int data;
+    struct Node* next;
 };
-int N;
+int N = 0;
 
-// Insert operation
-struct Node* insert(struct Node *head, int coefficient, int exponent)
+struct Node* insert(struct Node* head, int data, int index)
 {
-    if (N == 0)
+    struct Node* ptr = (struct Node*)malloc(sizeof(struct Node*));
+    if(index == 0) // insert at first
     {
-        head->coefficient = coefficient;
-        head->exponent = exponent;
-        head->next = NULL;
+        ptr->data = data;
+        ptr->next = head;
+
+        printf("Inserted %d at index %d.\n", data, index);
         N++;
+        return ptr;
+    }
+    else if(index == N) // insert at end
+    {
+        ptr->data = data;
+        struct Node* p = head;
+        
+        while(p->next!=NULL)
+            p = p->next;
+        
+        p->next = ptr;
+        ptr->next = NULL;
+
+        printf("Inserted %d at index %d.\n", data, index);
+        N++; 
         return head;
     }
     else
     {
-        // New node
-        struct Node *ptr = (struct Node *)malloc(sizeof(struct Node));
-        ptr->coefficient = coefficient;
-        ptr->exponent = exponent;
-        ptr->next = NULL;
+        if(index > N)
+        {
+            printf("Invalid index!\n");
+            return head;
+        }
+        else
+        {
+            struct Node* p = head;
 
-        struct Node *p = head;
+            int i = 0;
+            while(i != index - 1)
+            {
+                p = p->next;
+                i++;
+            }
 
-        while (p->next != NULL)
-            p = p->next;
+            ptr->data = data;
+            ptr->next = p->next;
+            p->next = ptr;
 
-        p->next = ptr;
-        N++;
+            printf("Inserted %d at index %d.\n", data, index);
+            N++; 
+            return head;
+        }
+    }
+}
+
+struct Node* delete(struct Node* head, int index)
+{
+    struct Node* ptr = head;
+    struct Node* qtr = head->next;
+    if(index == 0) // delete first node
+    {
+        printf("Deleted node with value %d at index %d.\n", ptr->data, index);
+        head = head->next;
+        free(ptr);
+        N--;
         return head;
     }
-}
-
-// Create operation
-void create(struct Node* head, int n)
-{
-    int terms;
-    N = 0;
-    printf("Enter the details for polynomial %d:\n", n);
-    printf("Enter the number of terms: ");
-    scanf("%d", &terms);
-
-    for(int i = 1; i <= terms; i++)
+    else if(index == N - 1) // delete last node
     {
-        int coefficient, exponent;
-        printf("\n");
-        printf("Enter coefficient for term %d: ", i);
-        scanf("%d", &coefficient);
-        printf("Enter exponent for term %d: ", i);
-        scanf("%d", &exponent);
-
-        head = insert(head, coefficient, exponent);
+        while(qtr->next != NULL)
+        {
+            ptr = ptr->next;
+            qtr = qtr->next;
+        }
+        printf("Deleted node with value %d at index %d.\n", qtr->data, index);
+        N--;
+        ptr->next = NULL;
+        free(qtr);
+        return head;
+    }
+    else
+    {
+        if(index >= N)
+        {
+            printf("Invalid Index!\n");
+            return head;
+        }
+        else
+        {
+            int i = 0;
+            while(i!=index-1)
+            {
+                ptr = ptr->next;
+                qtr = qtr->next;
+                i++;
+            }
+            printf("Deleted node with value %d at index %d.\n", qtr->data, index);
+            ptr->next = qtr->next;
+            free(qtr);
+            N--;
+            return head;
+        }
     }
 }
-
-// Show operation
-void show(struct Node *ptr)
+void show(struct Node* ptr)
 {
     int i = 0;
     if(N!=0)
     {
-        while (ptr != NULL)
+        printf("The linked list's data is:\n");
+        while(ptr!=NULL)
         {
-            if(i==0)
-            {
-                if(ptr->exponent == 0)
-                    printf("%d ", ptr->coefficient);
-                else
-                    printf("(%dx^%d) ", ptr->coefficient, ptr->exponent);
-            }
-            else
-            {
-                if(ptr->exponent == 0)
-                    printf("+ %d ", ptr->coefficient);
-                else
-                    printf("+ (%dx^%d) ", ptr->coefficient, ptr->exponent);
-            }
+            printf("%d at %d.\n", ptr->data, i);
             ptr = ptr->next;
             i++;
         }
     }
     else
-        printf("0");
-}
-
-// Add operation
-void add(struct Node* head1, struct Node* head2)
-{
-    struct Node* ptr1 = head1;
-    struct Node* ptr2 = head2;
-
-    // Final polynomial 
-    struct Node* ptr3 = (struct Node*)malloc(sizeof(struct Node));
-
-    N = 0;
+        printf("The linked list is empty!\n");
     
-    while(ptr1!=NULL && ptr2!=NULL)
-    {
-        if(ptr1->exponent == ptr2->exponent)
-        {
-            int coefficient = ptr1->coefficient + ptr2->coefficient;
-            ptr3 = insert(ptr3, coefficient, ptr1->exponent);
-            ptr1 = ptr1->next;
-            ptr2 = ptr2->next;
-        }
-        else if(ptr1->exponent > ptr2->exponent)
-        {
-            ptr3 = insert(ptr3, ptr1->coefficient, ptr1->exponent);
-            ptr1 = ptr1->next;
-        }
-        else
-        {
-            ptr3 = insert(ptr3, ptr2->coefficient, ptr2->exponent);
-            ptr2 = ptr2->next;
-        }
-    }
-    while(ptr1!=NULL)
-    {
-        ptr3 = insert(ptr3, ptr1->coefficient, ptr1->exponent);
-        ptr1 = ptr1->next;
-    }
-    while(ptr2!=NULL)
-    {
-        ptr3 = insert(ptr3, ptr2->coefficient, ptr2->exponent);
-        ptr2 = ptr2->next;
-    }
-
-    printf("\n");
-    printf("First polynomial: ");
-    show(head1);
-    printf("\n");
-    printf("Second polynomial: ");
-    show(head2);
-    printf("\n");
-    printf("Addition of both the polynomial is: ");
-    show(ptr3);
-    printf("\n");
-
-}
-
-// Subtract operation
-void subtract(struct Node* head1, struct Node* head2)
-{
-    struct Node* ptr1 = head1;
-    struct Node* ptr2 = head2;
-
-    // Final polynomial 
-    struct Node* ptr3 = (struct Node*)malloc(sizeof(struct Node));
-
-    N = 0;
-    
-    while(ptr1!=NULL && ptr2!=NULL)
-    {
-        if(ptr1->exponent == ptr2->exponent)
-        {
-            int coefficient = ptr1->coefficient - ptr2->coefficient;
-            ptr3 = insert(ptr3, coefficient, ptr1->exponent);
-            ptr1 = ptr1->next;
-            ptr2 = ptr2->next;
-        }
-        else if(ptr1->exponent > ptr2->exponent)
-        {
-            ptr3 = insert(ptr3, ptr1->coefficient, ptr1->exponent);
-            ptr1 = ptr1->next;
-        }
-        else
-        {
-            ptr3 = insert(ptr3, -ptr2->coefficient, ptr2->exponent);
-            ptr2 = ptr2->next;
-        }
-    }
-    while(ptr1!=NULL)
-    {
-        ptr3 = insert(ptr3, ptr1->coefficient, ptr1->exponent);
-        ptr1 = ptr1->next;
-    }
-    while(ptr2!=NULL)
-    {
-        ptr3 = insert(ptr3, -ptr2->coefficient, ptr2->exponent);
-        ptr2 = ptr2->next;
-    }
-
-    printf("\n");
-    printf("First polynomial: ");
-    show(head1);
-    printf("\n");
-    printf("Second polynomial: ");
-    show(head2);
-    printf("\n");
-    printf("Subtraction of both the polynomial is: ");
-    show(ptr3);
-    printf("\n");
-}
-
-// Multiply operation
-void multiply(struct Node* head1, struct Node* head2)
-{
-    struct Node* ptr1 = head1;
-    struct Node* ptr2 = head2;
-
-    // Final polynomial 
-    struct Node* ptr3 = (struct Node*)malloc(sizeof(struct Node));
-    N = 0;
-
-    while(ptr1!=NULL)
-    {
-        while(ptr2!=NULL)
-        {
-            int coefficient = ptr1->coefficient * ptr2->coefficient;
-            int exponent = ptr1->exponent + ptr2->exponent;
-
-            ptr3 = insert(ptr3, coefficient, exponent);
-            ptr2 = ptr2->next;
-        }
-        ptr1 = ptr1->next;
-        ptr2 = head2;
-    }
-
-    printf("\n");
-    printf("First polynomial: ");
-    show(head1);
-    printf("\n");
-    printf("Second polynomial: ");
-    show(head2);
-    printf("\n");
-    printf("Multiplication of both the polynomial is: ");
-    show(ptr3);
-    printf("\n");
 }
 int main()
 {
-    // Equation 1
-    struct Node *head1 = (struct Node *)malloc(sizeof(struct Node));
+    struct Node* head = (struct Node*)malloc(sizeof(struct Node));
 
-    // Equation 2
-    struct Node *head2 = (struct Node *)malloc(sizeof(struct Node));
-
-    // Taking details of both polynomials
-    create(head1, 1);
-    printf("\n\n\n");
-    create(head2, 2);
-
-    // Selecting operations 
-    printf("\n\n");
+    // Taking user input
     start: //goto
     printf("Enter the operation:\n");
-    printf("1: To add.\n");
-    printf("2: To subtract.(1st poly - 2nd poly)\n");
-    printf("3: To multiply.\n");
-    printf("4: To exit.\n");
+    printf("1: To create a linked list.\n");
+    printf("2: To insert a new node.\n");
+    printf("3: To delete a node.\n");
+    printf("4: To display linked list.\n");
+    printf("5: To exit.\n");
 
     int x;
     scanf("%d", &x);
@@ -262,26 +149,46 @@ int main()
     {
         case 1:
         {
-            add(head1, head2);
+            printf("Enter the data: ");
+            int data;
+            scanf("%d", &data);
+            head->data = data;
+            head->next = NULL;
+            N++;
             printf("\n");
             goto start;
             break;
         }
         case 2:
         {
-            subtract(head1, head2);
+            int index, data;
+            printf("Enter the index: ");
+            scanf("%d", &index);
+            printf("Enter the data: ");
+            scanf("%d", &data);
+            head = insert(head, data, index);
             printf("\n");
             goto start;
             break;
         }
         case 3:
         {
-            multiply(head1, head2);
+            int index;
+            printf("Enter the index: ");
+            scanf("%d", &index);
+            head = delete(head, index);
             printf("\n");
             goto start;
             break;
         }
         case 4:
+        {
+            show(head);
+            printf("\n");
+            goto start;
+            break;
+        }
+        case 5:
         {
             return 0;
             break;
@@ -293,5 +200,6 @@ int main()
             goto start;
         }
     }
+
     return 0;
 }
